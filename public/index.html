@@ -454,6 +454,15 @@
     const form = document.querySelector("#form");
     const result = document.querySelector("#result");
     const connection = new Connection(`${window.location.origin}/api/rpc`, "confirmed");
+
+    async function readJson(response) {
+      const text = await response.text();
+      try {
+        return text ? JSON.parse(text) : {};
+      } catch {
+        throw new Error(text.replace(/\s+/g, " ").slice(0, 180) || `Request failed (${response.status}).`);
+      }
+    }
     let wallet = null;
     let step = 1;
 
@@ -654,7 +663,7 @@
             imageData: imageFile ? await fileDataUrl(imageFile) : "",
           }),
         });
-        const metadata = await metadataResponse.json();
+        const metadata = await readJson(metadataResponse);
         if (!metadataResponse.ok) throw new Error(metadata.error || "Could not publish the token name and logo.");
         const amount = wholeTokensToBase(supply, decimals);
         const mint = Keypair.generate();
@@ -789,7 +798,7 @@
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ mint, tokenAmount: "1", solAmount: "0.001" }),
         });
-        const body = await response.json();
+        const body = await readJson(response);
         if (!response.ok || !body.createFeeSol) return 150_000_000n;
         return toRaw(body.createFeeSol, 9);
       } catch {
@@ -839,7 +848,7 @@
       const id = document.querySelector("#pool-id").value.trim();
       if (!id) throw new Error("Enter the pool address first.");
       const response = await fetch(`/api/pool?id=${encodeURIComponent(id)}`);
-      const body = await response.json();
+      const body = await readJson(response);
       if (!response.ok) throw new Error(body.error || "Pool lookup failed.");
       const held = await tokenHoldings(body.tokenMint);
       document.querySelector("#add-amount-max").textContent = held.raw > 0n ? `· ${held.text} tokens` : "· 0 tokens";
@@ -993,7 +1002,7 @@
         textContent: "Reading pools in this wallet...",
       }));
       const response = await fetch(`/api/pools?owner=${encodeURIComponent(wallet.toBase58())}`);
-      const body = await response.json();
+      const body = await readJson(response);
       if (!response.ok) throw new Error(body.error || "Could not read your pools.");
       renderPools(body.pools || []);
     }
@@ -1012,7 +1021,7 @@
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ...payload, owner: wallet.toBase58(), confirm: true }),
       });
-      const body = await response.json();
+      const body = await readJson(response);
       if (!response.ok) throw new Error(body.error || "Could not build the pool transaction.");
       const bytes = Uint8Array.from(atob(body.transaction), (char) => char.charCodeAt(0));
       const signed = await provider().signTransaction(VersionedTransaction.deserialize(bytes));
@@ -1032,7 +1041,7 @@
             solAmount: document.querySelector("#pool-sol").value.trim(),
           }),
         });
-        const body = await response.json();
+        const body = await readJson(response);
         if (!response.ok) throw new Error(body.error || "Preview failed.");
         poolResult.textContent = `Trade fee ${body.tradeFee}. Raydium pool creation fee ${body.createFeeSol} SOL, plus your ${body.solAmount} SOL and ${body.tokenAmount} tokens.`;
       } catch (error) {
@@ -1066,7 +1075,7 @@
       try {
         const id = document.querySelector("#pool-id").value.trim();
         const response = await fetch(`/api/pool?id=${encodeURIComponent(id)}`);
-        const body = await response.json();
+        const body = await readJson(response);
         if (!response.ok) throw new Error(body.error || "Pool lookup failed.");
         poolResult.textContent = `Token ${body.tokenMint}\nReserves: ${body.tokenReserve} tokens and ${body.solReserve} SOL`;
       } catch (error) {
