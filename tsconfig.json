@@ -13,5 +13,5 @@
       "module": "commonjs"
     }
   },
-  "include": ["web"]
+  "include": ["web", "api"]
 }

@@ -14,7 +14,7 @@ const WSOL = "So11111111111111111111111111111111111111112";
 const MAX_SOL = 100;
 
 function rpcUrl() {
-  return process.env.HELIUS_RPC_URL?.trim() || "https://api.mainnet-beta.solana.com";
+  return process.env.SOLANA_RPC_URL?.trim() || process.env.HELIUS_RPC_URL?.trim() || "https://api.mainnet-beta.solana.com";
 }
 
 function connection() {

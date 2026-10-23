@@ -1,0 +1,1097 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Launch Coin | Create Solana Tokens</title>
+  <style>
+    :root {
+      --bg: #191919;
+      --text: #ededed;
+      --muted: #a3a3a3;
+      --faint: #737373;
+      --card: #262626;
+      --line: #404040;
+      --input: #404040;
+      --purple: #5c02e4;
+      --step: #374151;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Helvetica, Arial, sans-serif;
+    }
+    a { color: inherit; text-decoration: none; }
+    button, input, textarea { font: inherit; color: inherit; }
+    .topbar {
+      text-align: center;
+      font-size: 12px;
+      letter-spacing: 0.04em;
+      padding: 8px 16px;
+      color: #fff;
+      background: linear-gradient(90deg, #22d3ee, #6366f1 45%, #7c3aed);
+    }
+    header {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+      padding: 16px 28px;
+      border-bottom: 1px solid #2a2a2a;
+    }
+    .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 20px; }
+    .brand span.mark {
+      width: 28px; height: 28px; border-radius: 8px;
+      display: grid; place-items: center;
+      background: #5c02e4;
+      font-size: 16px;
+    }
+    nav { display: flex; gap: 8px; align-items: center; flex: 1; }
+    nav button {
+      background: transparent;
+      border: 0;
+      color: #ededed;
+      border-radius: 6px;
+      padding: 8px 10px;
+      cursor: pointer;
+    }
+    nav button.active { color: #fff; }
+    .badge {
+      font-size: 10px;
+      font-weight: 700;
+      border-radius: 999px;
+      padding: 2px 6px;
+      margin-left: 6px;
+      vertical-align: middle;
+    }
+    .badge.new { background: #16a34a; color: white; }
+    .badge.live { background: #dc2626; color: white; }
+    #connect {
+      margin-left: auto;
+      background: var(--purple);
+      border: 0;
+      border-radius: 8px;
+      padding: 10px 16px;
+      cursor: pointer;
+      max-width: 220px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    main { max-width: 920px; margin: 0 auto; padding: 54px 20px 80px; }
+    h1 {
+      text-align: center;
+      font-size: 58px;
+      line-height: 1.05;
+      margin: 0 0 16px;
+      font-weight: 800;
+    }
+    .sub { text-align: center; color: #bdbdbd; margin: 0 0 36px; }
+    .steps { display: flex; justify-content: center; align-items: center; gap: 0; margin-bottom: 28px; }
+    .dot {
+      width: 40px; height: 40px; border-radius: 999px;
+      display: grid; place-items: center;
+      background: var(--step); color: white; font-weight: 700;
+    }
+    .dot.on { background: var(--purple); }
+    .bar { width: 96px; height: 2px; background: var(--step); }
+    .panel {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 22px;
+    }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    label { display: block; font-size: 14px; margin-bottom: 8px; }
+    input, textarea {
+      width: 100%;
+      background: var(--input);
+      border: 1px solid #2e2d3e;
+      border-radius: 6px;
+      padding: 10px 12px;
+    }
+    textarea { min-height: 90px; resize: vertical; }
+    .drop {
+      margin-top: 16px;
+      background: #404040;
+      border: 1px dashed #6b7280;
+      border-radius: 16px;
+      min-height: 220px;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      cursor: pointer;
+      padding: 24px;
+    }
+    .drop strong { display: block; margin-top: 8px; }
+    .drop p { margin: 6px 0 0; color: var(--muted); font-size: 14px; }
+    .cloud {
+      width: 80px; height: 80px; border-radius: 999px;
+      background: #262626;
+      display: grid; place-items: center;
+      margin: 0 auto;
+      font-size: 28px;
+    }
+    .drop img { max-height: 120px; border-radius: 12px; }
+    .amount-field { position: relative; }
+    .amount-field input { padding-right: 64px; }
+    .max {
+      position: absolute;
+      right: 6px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: #31205a;
+      color: #fff;
+      border: 0;
+      border-radius: 4px;
+      padding: 4px 8px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      cursor: pointer;
+    }
+    .balance-note { color: var(--muted); font-weight: 400; }
+    .actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 18px; }
+    .next, #submit {
+      background: var(--purple);
+      border: 0;
+      border-radius: 6px;
+      padding: 10px 16px;
+      cursor: pointer;
+    }
+    .ghost {
+      background: transparent;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 10px 16px;
+      cursor: pointer;
+    }
+    button:disabled { opacity: 0.45; cursor: not-allowed; }
+    .check { display: flex; gap: 10px; align-items: flex-start; margin-top: 14px; color: var(--muted); }
+    .check input { width: auto; margin-top: 3px; }
+    select {
+      width: 100%;
+      background: var(--input);
+      border: 1px solid #2e2d3e;
+      border-radius: 6px;
+      padding: 10px 12px;
+    }
+    #pool-result { white-space: pre-wrap; color: #d4d4d4; }
+    .pools { margin-top: 28px; }
+    .pools-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+    .pools-head h2 { margin: 0; font-size: 28px; }
+    .icon-btn {
+      width: 36px; height: 36px; border-radius: 999px;
+      border: 1px solid #333; background: #111; color: #fff; cursor: pointer;
+      display: grid; place-items: center;
+    }
+    .pool-card {
+      background: #141414; border: 1px solid #2a2a2a; border-radius: 16px;
+      padding: 18px; margin-bottom: 12px;
+    }
+    .pool-top { display: flex; justify-content: space-between; gap: 16px; align-items: flex-start; flex-wrap: wrap; }
+    .pair { display: flex; gap: 12px; align-items: center; }
+    .avatars { position: relative; width: 56px; height: 36px; flex: none; }
+    .avatars span {
+      position: absolute; top: 0; width: 36px; height: 36px; border-radius: 999px;
+      display: grid; place-items: center; font-weight: 700; border: 2px solid #141414; font-size: 12px;
+    }
+    .avatars .sol { left: 0; background: linear-gradient(135deg, #14f195, #9945ff); }
+    .avatars .tok { left: 20px; background: #5c02e4; }
+    .pair h3 { margin: 0; font-size: 20px; }
+    .pair p { margin: 3px 0 0; color: var(--muted); font-size: 13px; }
+    .views { display: flex; gap: 8px; flex-wrap: wrap; }
+    .views a {
+      background: var(--purple); color: #fff; text-decoration: none;
+      border-radius: 999px; padding: 8px 12px; font-size: 13px;
+    }
+    .pool-id { margin: 16px 0; color: #d4d4d4; font-size: 14px; word-break: break-all; }
+    .pool-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+    .pool-stats span { display: block; color: var(--faint); font-size: 12px; letter-spacing: 0.04em; margin-bottom: 4px; }
+    .pool-stats strong { font-size: 26px; font-weight: 700; }
+    .pool-stats em { display: block; margin-top: 4px; color: var(--muted); font-style: normal; font-size: 13px; }
+    .value-line { display: flex; align-items: center; gap: 8px; }
+    .pool-empty { color: var(--muted); margin: 0; }
+    @media (max-width: 800px) {
+      .pool-stats { grid-template-columns: 1fr; }
+      .pool-stats strong { font-size: 22px; }
+    }
+    .guide { margin-top: 72px; }
+    .guide h2 { font-size: 28px; margin-bottom: 8px; }
+    .guide ol { color: var(--muted); line-height: 1.6; }
+    footer { border-top: 1px solid #2a2a2a; padding: 22px 28px; color: var(--faint); display: flex; gap: 18px; }
+    @media (max-width: 800px) {
+      h1 { font-size: 36px; }
+      header { flex-wrap: wrap; }
+      nav { order: 3; width: 100%; overflow: auto; }
+      .grid { grid-template-columns: 1fr; }
+      #connect { margin-left: 0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="topbar" id="banner">NO PLATFORM FEE. NETWORK RENT ONLY.</div>
+  <header>
+    <a class="brand" href="/launch"><span class="mark">🚀</span> Launch Coin</a>
+    <nav>
+      <button type="button" class="active" data-view="create">Create Coin</button>
+      <button type="button" data-view="liquidity">Manage Liquidity</button>
+      <button type="button" data-view="copy">Copy Trending Coins <span class="badge new">NEW</span></button>
+      <button type="button" data-view="tracker">Tracker <span class="badge live">LIVE</span></button>
+    </nav>
+    <button id="connect" type="button">Connect Wallet</button>
+  </header>
+  <main>
+    <section id="view-create">
+      <h1>Launch Your Own Coin FAST ⚡</h1>
+      <p class="sub">Launch your own token on Solana in seconds. No coding required.</p>
+      <div class="steps" aria-hidden="true">
+        <div class="dot on" data-dot="1">1</div>
+        <div class="bar"></div>
+        <div class="dot" data-dot="2">2</div>
+        <div class="bar"></div>
+        <div class="dot" data-dot="3">3</div>
+      </div>
+      <form id="form" class="panel">
+        <div data-step="1">
+          <div class="grid">
+            <div>
+              <label for="name">Token Name</label>
+              <input id="name" maxlength="32" placeholder="Meme Coin" required />
+            </div>
+            <div>
+              <label for="symbol">Token Symbol</label>
+              <input id="symbol" maxlength="10" placeholder="MEME" required />
+            </div>
+          </div>
+          <label>Token Image</label>
+          <div class="drop" id="drop">
+            <div>
+              <div class="cloud">☁</div>
+              <strong>Click to upload or drag and drop</strong>
+              <p>PNG or JPG. Max 3MB.</p>
+              <img id="preview" alt="" hidden />
+            </div>
+          </div>
+          <input id="file" type="file" accept="image/png,image/jpeg" hidden />
+          <label for="image" style="margin-top:14px;">Public image URL</label>
+          <input id="image" placeholder="https://" />
+          <p class="sub" style="text-align:left;margin-top:8px;">Phantom cannot read a file that stays on this computer. The logo is published with the token name before the coin is created.</p>
+          <div class="actions">
+            <button class="next" id="to-step-2" type="button" disabled>Next →</button>
+          </div>
+        </div>
+        <div data-step="2" hidden>
+          <div class="grid">
+            <div>
+              <label for="decimals">Decimals</label>
+              <input id="decimals" type="number" min="0" max="9" value="9" />
+            </div>
+            <div>
+              <label for="supply">Supply</label>
+              <input id="supply" type="number" min="1" step="1" value="1000000000" />
+            </div>
+          </div>
+          <label for="description">Description</label>
+          <textarea id="description" maxlength="200" placeholder="What is this token?"></textarea>
+          <div class="actions">
+            <button class="ghost" type="button" data-goto="1">Previous</button>
+            <button class="next" type="button" data-goto="3">Next →</button>
+          </div>
+        </div>
+        <div data-step="3" hidden>
+          <div class="grid">
+            <div>
+              <label for="twitter">Twitter</label>
+              <input id="twitter" placeholder="https://" />
+            </div>
+            <div>
+              <label for="telegram">Telegram</label>
+              <input id="telegram" placeholder="https://" />
+            </div>
+          </div>
+          <label for="website">Website</label>
+          <input id="website" placeholder="https://" />
+          <label class="check"><input id="revokeMint" type="checkbox" /> <span>Revoke Mint. No one can create more tokens later.</span></label>
+          <label class="check"><input id="revokeFreeze" type="checkbox" /> <span>Revoke Freeze. No one can freeze holder accounts.</span></label>
+          <p id="result"></p>
+          <div class="actions">
+            <button class="ghost" type="button" data-goto="2">Previous</button>
+            <button id="submit" type="submit">Create Token</button>
+          </div>
+        </div>
+      </form>
+      <section class="guide">
+        <h2>How to use Solana Token Creator</h2>
+        <p class="sub" style="text-align:left;">Follow these simple steps:</p>
+        <ol>
+          <li>Connect your Solana wallet.</li>
+          <li>Write the name and symbol.</li>
+          <li>Choose decimals. 9 is the usual meme-coin setting.</li>
+          <li>Set the supply and a short description.</li>
+          <li>Add a logo. A local file is published so wallets can load it.</li>
+          <li>Click Create Token and approve once. You pay Solana account rent only, with no Metaplex name fee.</li>
+        </ol>
+      </section>
+    </section>
+    <section id="view-liquidity" hidden>
+      <h1>Create Raydium Liquidity Pool</h1>
+      <p class="sub">Deposit your token and SOL into a new pool, or add more to a pool you already opened. Phantom shows the full cost before you approve.</p>
+      <form id="create-pool" class="panel">
+        <h2>New pool</h2>
+        <label for="pool-mint">Token mint</label>
+        <input id="pool-mint" placeholder="Mint address" required />
+        <div class="grid">
+          <div>
+            <label for="pool-token">Token amount <span id="pool-token-max" class="balance-note"></span></label>
+            <div class="amount-field">
+              <input id="pool-token" inputmode="decimal" placeholder="1000000" />
+              <button class="max" id="max-token" type="button">MAX</button>
+            </div>
+          </div>
+          <div>
+            <label for="pool-sol">SOL amount <span id="pool-sol-max" class="balance-note"></span></label>
+            <div class="amount-field">
+              <input id="pool-sol" inputmode="decimal" placeholder="0.1" />
+              <button class="max" id="max-sol" type="button">MAX</button>
+            </div>
+          </div>
+        </div>
+        <label class="check">
+          <input id="pool-confirm" type="checkbox" />
+          <span>I understand both amounts leave my wallet and open trading at this price.</span>
+        </label>
+        <div class="actions">
+          <button class="ghost" id="pool-preview" type="button">Check fee</button>
+          <button class="next" type="submit">Create pool</button>
+        </div>
+      </form>
+      <form id="add-pool" class="panel" style="margin-top:16px;">
+        <h2>Add to an existing pool</h2>
+        <label for="pool-id">Pool address</label>
+        <input id="pool-id" placeholder="Pool id" />
+        <div class="grid">
+          <div>
+            <label for="add-side">Deposit</label>
+            <select id="add-side">
+              <option value="token">Token</option>
+              <option value="sol">SOL</option>
+            </select>
+          </div>
+          <div>
+            <label for="add-amount">Amount <span id="add-amount-max" class="balance-note"></span></label>
+            <div class="amount-field">
+              <input id="add-amount" inputmode="decimal" placeholder="0.1" />
+              <button class="max" id="max-add" type="button">MAX</button>
+            </div>
+          </div>
+        </div>
+        <p>The other side is calculated from the pool price, with 1% slippage room.</p>
+        <div class="actions">
+          <button class="ghost" id="pool-lookup" type="button">Look up</button>
+          <button class="next" type="submit">Add liquidity</button>
+        </div>
+      </form>
+      <p id="pool-result"></p>
+      <section class="pools">
+        <div class="pools-head">
+          <h2>Your Pools</h2>
+          <button id="refresh-pools" class="icon-btn" type="button" aria-label="Refresh pools">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+              <path d="M13.5 8A5.5 5.5 0 1 1 8 2.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+              <path d="M8 1v3.2h3.2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+        </div>
+        <div id="pool-list"><p class="pool-empty">Connect your wallet to see the Raydium pools it holds.</p></div>
+      </section>
+    </section>
+    <section id="view-other" class="panel" hidden>
+      <h2 id="other-title"></h2>
+      <p id="other-copy"></p>
+      <div class="actions">
+        <button class="next" type="button" id="back-create">Back to Create Coin</button>
+      </div>
+    </section>
+  </main>
+  <footer>
+    <span>Transactions are signed in your wallet. This page does not take a platform fee.</span>
+  </footer>
+  <script type="module">
+    import { Buffer } from "https://esm.sh/buffer@6.0.3";
+    import {
+      Connection,
+      Keypair,
+      PublicKey,
+      SystemProgram,
+      Transaction,
+      LAMPORTS_PER_SOL,
+      VersionedTransaction,
+    } from "https://esm.sh/@solana/web3.js@1.95.8";
+    import {
+      TOKEN_2022_PROGRAM_ID,
+      ExtensionType,
+      TYPE_SIZE,
+      LENGTH_SIZE,
+      getMintLen,
+      createInitializeMintInstruction,
+      createInitializeMetadataPointerInstruction,
+      createAssociatedTokenAccountInstruction,
+      createMintToInstruction,
+      createSetAuthorityInstruction,
+      AuthorityType,
+      getAssociatedTokenAddress,
+    } from "https://esm.sh/@solana/spl-token@0.4.15";
+    import { createInitializeInstruction, pack } from "https://esm.sh/@solana/spl-token-metadata@0.1.6";
+
+    window.Buffer = Buffer;
+
+    const TOKEN_PROGRAM = TOKEN_2022_PROGRAM_ID;
+    const banner = document.querySelector("#banner");
+    const connectButton = document.querySelector("#connect");
+    const form = document.querySelector("#form");
+    const result = document.querySelector("#result");
+    const connection = new Connection(`${window.location.origin}/api/rpc`, "confirmed");
+    let wallet = null;
+    let step = 1;
+
+    function provider() {
+      const injected = window.solana;
+      if (injected?.isPhantom) return injected;
+      return null;
+    }
+
+    function metadataSpace(mint, name, symbol, uri) {
+      const packed = pack({
+        mint,
+        name,
+        symbol,
+        uri,
+        additionalMetadata: [],
+      });
+      return getMintLen([ExtensionType.MetadataPointer]) + TYPE_SIZE + LENGTH_SIZE + packed.length;
+    }
+
+    function wholeTokensToBase(supply, decimals) {
+      if (!Number.isInteger(supply) || supply < 1) {
+        throw new Error("Supply must be a whole number of at least 1.");
+      }
+      const base = BigInt(supply) * (10n ** BigInt(decimals));
+      if (base > 18446744073709551615n) {
+        throw new Error("Supply is too large for these decimals.");
+      }
+      return base;
+    }
+
+    function optionalHttps(value) {
+      const text = value.trim();
+      if (!text) return "";
+      const parsed = new URL(text);
+      if (parsed.protocol !== "https:") throw new Error("Image URL must start with https://");
+      if (text.length > 200) throw new Error("Image URL is too long.");
+      return text;
+    }
+
+    function fileDataUrl(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(String(reader.result || ""));
+        reader.onerror = () => reject(new Error("Could not read the image file."));
+        reader.readAsDataURL(file);
+      });
+    }
+
+    function showStep(next) {
+      step = next;
+      document.querySelectorAll("[data-step]").forEach((panel) => {
+        panel.hidden = Number(panel.dataset.step) !== step;
+      });
+      document.querySelectorAll("[data-dot]").forEach((dot) => {
+        dot.classList.toggle("on", Number(dot.dataset.dot) === step);
+      });
+    }
+
+    function refreshNext() {
+      const ready = document.querySelector("#name").value.trim() && document.querySelector("#symbol").value.trim();
+      document.querySelector("#to-step-2").disabled = !ready;
+    }
+
+    async function showRent() {
+      try {
+        const mintRent = await connection.getMinimumBalanceForRentExemption(
+          metadataSpace(PublicKey.default, "Meme Coin", "MEME", "https://example.com/metadata.json")
+        );
+        const ataRent = await connection.getMinimumBalanceForRentExemption(165);
+        const total = (mintRent + ataRent) / LAMPORTS_PER_SOL;
+        banner.textContent = `NO PLATFORM FEE. NETWORK RENT ABOUT ${total.toFixed(4)} SOL.`;
+      } catch (error) {
+        banner.textContent = "NO PLATFORM FEE. YOU PAY SOLANA NETWORK RENT ONLY.";
+      }
+    }
+
+    async function connect() {
+      const phantom = provider();
+      if (!phantom) {
+        connectButton.textContent = "Install Phantom";
+        return;
+      }
+      const response = await phantom.connect();
+      wallet = response.publicKey;
+      const balance = await connection.getBalance(wallet);
+      const address = wallet.toBase58();
+      connectButton.textContent = `${address.slice(0, 4)}...${address.slice(-4)} · ${(balance / LAMPORTS_PER_SOL).toFixed(3)} SOL`;
+      noteTokenBalance().catch(() => {});
+      noteSolBalance().catch(() => {});
+      loadYourPools().catch(() => {});
+    }
+
+    function showOther(view, title, copy) {
+      document.querySelector("#view-create").hidden = true;
+      document.querySelector("#view-liquidity").hidden = true;
+      document.querySelector("#view-other").hidden = false;
+      document.querySelector("#other-title").textContent = title;
+      document.querySelector("#other-copy").textContent = copy;
+      document.querySelectorAll("nav button").forEach((button) => {
+        button.classList.toggle("active", button.dataset.view === view);
+      });
+    }
+
+    function showCreate() {
+      document.querySelector("#view-create").hidden = false;
+      document.querySelector("#view-liquidity").hidden = true;
+      document.querySelector("#view-other").hidden = true;
+      document.querySelectorAll("nav button").forEach((button) => {
+        button.classList.toggle("active", button.dataset.view === "create");
+      });
+    }
+
+    function showLiquidity() {
+      document.querySelector("#view-create").hidden = true;
+      document.querySelector("#view-liquidity").hidden = false;
+      document.querySelector("#view-other").hidden = true;
+      document.querySelectorAll("nav button").forEach((button) => {
+        button.classList.toggle("active", button.dataset.view === "liquidity");
+      });
+      loadYourPools().catch(() => {});
+    }
+
+    document.querySelector("#name").addEventListener("input", refreshNext);
+    document.querySelector("#symbol").addEventListener("input", refreshNext);
+    document.querySelector("#to-step-2").addEventListener("click", () => showStep(2));
+    document.querySelectorAll("[data-goto]").forEach((button) => {
+      button.addEventListener("click", () => showStep(Number(button.dataset.goto)));
+    });
+    document.querySelector("#drop").addEventListener("click", () => document.querySelector("#file").click());
+    document.querySelector("#file").addEventListener("change", () => {
+      const file = document.querySelector("#file").files[0];
+      const preview = document.querySelector("#preview");
+      if (!file) return;
+      if (file.size > 3 * 1024 * 1024) {
+        result.textContent = "Image must be 3MB or smaller.";
+        return;
+      }
+      preview.src = URL.createObjectURL(file);
+      preview.hidden = false;
+    });
+    document.querySelector("#back-create").addEventListener("click", showCreate);
+    document.querySelectorAll("nav button").forEach((button) => {
+      button.addEventListener("click", () => {
+        const view = button.dataset.view;
+        if (view === "create") {
+          showCreate();
+          return;
+        }
+        if (view === "liquidity") {
+          showLiquidity();
+          return;
+        }
+        const messages = {
+          copy: "Copying a trending coin and launching it ahead of the original is not available here.",
+          tracker: "The tweet tracker is not part of this local page.",
+        };
+        showOther(view, button.childNodes[0].textContent.trim(), messages[view]);
+      });
+    });
+    connectButton.addEventListener("click", () => {
+      connect().catch((error) => {
+        connectButton.textContent = error instanceof Error ? error.message : "Wallet failed";
+      });
+    });
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      if (step !== 3) return;
+      result.textContent = "";
+      const submit = document.querySelector("#submit");
+      submit.disabled = true;
+      try {
+        if (!wallet) await connect();
+        if (!wallet) return;
+        const phantom = provider();
+        const name = document.querySelector("#name").value.trim();
+        const symbol = document.querySelector("#symbol").value.trim().toUpperCase();
+        const decimals = Number(document.querySelector("#decimals").value);
+        const supply = Number(document.querySelector("#supply").value);
+        const imageUrl = optionalHttps(document.querySelector("#image").value);
+        const imageFile = document.querySelector("#file").files[0];
+        if (!name || name.length > 32) throw new Error("Name is required, up to 32 characters.");
+        if (!symbol || symbol.length > 10) throw new Error("Symbol is required, up to 10 characters.");
+        if (!Number.isInteger(decimals) || decimals < 0 || decimals > 9) {
+          throw new Error("Decimals must be a whole number from 0 to 9.");
+        }
+        if (imageFile && imageFile.size > 3 * 1024 * 1024) throw new Error("Image must be 3MB or smaller.");
+        result.textContent = "Publishing the token name and logo...";
+        const metadataResponse = await fetch("/api/metadata", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name,
+            symbol,
+            description: document.querySelector("#description").value.trim(),
+            imageUrl,
+            imageData: imageFile ? await fileDataUrl(imageFile) : "",
+          }),
+        });
+        const metadata = await metadataResponse.json();
+        if (!metadataResponse.ok) throw new Error(metadata.error || "Could not publish the token name and logo.");
+        const amount = wholeTokensToBase(supply, decimals);
+        const mint = Keypair.generate();
+        const mintLen = getMintLen([ExtensionType.MetadataPointer]);
+        const lamports = await connection.getMinimumBalanceForRentExemption(
+          metadataSpace(mint.publicKey, name, symbol, metadata.uri)
+        );
+        const ata = await getAssociatedTokenAddress(mint.publicKey, wallet, false, TOKEN_PROGRAM);
+        const transaction = new Transaction().add(
+          SystemProgram.createAccount({
+            fromPubkey: wallet,
+            newAccountPubkey: mint.publicKey,
+            space: mintLen,
+            lamports,
+            programId: TOKEN_PROGRAM,
+          }),
+          createInitializeMetadataPointerInstruction(mint.publicKey, wallet, mint.publicKey, TOKEN_PROGRAM),
+          createInitializeMintInstruction(mint.publicKey, decimals, wallet, wallet, TOKEN_PROGRAM),
+          createInitializeInstruction({
+            programId: TOKEN_PROGRAM,
+            metadata: mint.publicKey,
+            updateAuthority: wallet,
+            mint: mint.publicKey,
+            mintAuthority: wallet,
+            name,
+            symbol,
+            uri: metadata.uri,
+          }),
+          createAssociatedTokenAccountInstruction(wallet, ata, wallet, mint.publicKey, TOKEN_PROGRAM),
+          createMintToInstruction(mint.publicKey, ata, wallet, amount, [], TOKEN_PROGRAM)
+        );
+        if (document.querySelector("#revokeMint").checked) {
+          transaction.add(createSetAuthorityInstruction(mint.publicKey, wallet, AuthorityType.MintTokens, null, [], TOKEN_PROGRAM));
+        }
+        if (document.querySelector("#revokeFreeze").checked) {
+          transaction.add(createSetAuthorityInstruction(mint.publicKey, wallet, AuthorityType.FreezeAccount, null, [], TOKEN_PROGRAM));
+        }
+        transaction.feePayer = wallet;
+        transaction.recentBlockhash = (await connection.getLatestBlockhash()).blockhash;
+        transaction.partialSign(mint);
+        result.textContent = "Approve once. The SOL shown is account rent, not a platform fee. Phantom may still label a brand-new coin Unknown until the transaction confirms.";
+        const signed = await phantom.signTransaction(transaction);
+        const signature = await connection.sendRawTransaction(signed.serialize());
+        result.textContent = `Token sent.\nMint: ${mint.publicKey.toBase58()}\nName: ${name}\nLogo: ${metadata.uri}\nSignature: ${signature}`;
+      } catch (error) {
+        result.textContent = error instanceof Error ? error.message : "Token creation failed.";
+      } finally {
+        submit.disabled = false;
+      }
+    });
+
+    const poolResult = document.querySelector("#pool-result");
+    const TOKEN_2022 = new PublicKey("TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb");
+    const SOL_BUFFER = 20_000_000n;
+    const MAX_SOL_LAMPORTS = 100_000_000_000n;
+
+    function formatRaw(raw, decimals) {
+      const value = raw < 0n ? -raw : raw;
+      const text = value.toString().padStart(decimals + 1, "0");
+      const whole = text.slice(0, text.length - decimals);
+      const frac = text.slice(text.length - decimals).replace(/0+$/, "");
+      const shown = frac ? `${whole}.${frac}` : whole;
+      return raw < 0n ? `-${shown}` : shown;
+    }
+
+    function toRaw(text, decimals) {
+      const [whole, frac = ""] = String(text).trim().split(".");
+      const fracText = `${frac.replace(/\D/g, "")}${"0".repeat(decimals)}`.slice(0, decimals);
+      return BigInt(whole || "0") * 10n ** BigInt(decimals) + BigInt(fracText || "0");
+    }
+
+    async function ensureWallet() {
+      if (!wallet) await connect();
+      if (!wallet) throw new Error("Connect Phantom to read the max amount.");
+      return wallet;
+    }
+
+    async function tokenHoldings(mintAddress) {
+      const mintKey = new PublicKey(mintAddress);
+      const mintText = mintKey.toBase58();
+      const classic = await connection.getParsedTokenAccountsByOwner(wallet, { mint: mintKey });
+      const extra = await connection.getParsedTokenAccountsByOwner(wallet, { programId: TOKEN_2022 });
+      let raw = 0n;
+      let decimals = 0;
+      const take = (accounts) => {
+        for (const item of accounts.value) {
+          const info = item.account.data.parsed?.info;
+          if (!info || info.mint !== mintText) continue;
+          raw += BigInt(info.tokenAmount.amount);
+          decimals = info.tokenAmount.decimals;
+        }
+      };
+      take(classic);
+      take(extra);
+      return { raw, decimals, text: formatRaw(raw, decimals) };
+    }
+
+    async function solHoldings() {
+      const lamports = BigInt(await connection.getBalance(wallet));
+      return { lamports, text: formatRaw(lamports, 9) };
+    }
+
+    async function noteTokenBalance() {
+      const note = document.querySelector("#pool-token-max");
+      if (!wallet) {
+        note.textContent = "";
+        return;
+      }
+      const mint = document.querySelector("#pool-mint").value.trim();
+      if (!mint) {
+        note.textContent = "";
+        return;
+      }
+      const held = await tokenHoldings(mint);
+      note.textContent = `· ${held.text} in wallet`;
+      return held;
+    }
+
+    async function noteSolBalance() {
+      if (!wallet) return;
+      const held = await solHoldings();
+      document.querySelector("#pool-sol-max").textContent = `· ${held.text} SOL in wallet`;
+      return held;
+    }
+
+    async function createFeeLamports() {
+      const mint = document.querySelector("#pool-mint").value.trim();
+      if (!mint) return 150_000_000n;
+      try {
+        const response = await fetch("/api/pool/preview", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ mint, tokenAmount: "1", solAmount: "0.001" }),
+        });
+        const body = await response.json();
+        if (!response.ok || !body.createFeeSol) return 150_000_000n;
+        return toRaw(body.createFeeSol, 9);
+      } catch {
+        return 150_000_000n;
+      }
+    }
+
+    async function fillTokenMax() {
+      await ensureWallet();
+      const mint = document.querySelector("#pool-mint").value.trim();
+      if (!mint) throw new Error("Enter the token mint first.");
+      const held = await noteTokenBalance();
+      if (!held || held.raw === 0n) throw new Error("This wallet holds none of that token.");
+      document.querySelector("#pool-token").value = held.text;
+      poolResult.textContent = `MAX uses the full token balance: ${held.text}.`;
+    }
+
+    async function fillSolMax() {
+      await ensureWallet();
+      const held = await noteSolBalance();
+      const reserve = (await createFeeLamports()) + SOL_BUFFER;
+      let spendable = held.lamports > reserve ? held.lamports - reserve : 0n;
+      if (spendable > MAX_SOL_LAMPORTS) spendable = MAX_SOL_LAMPORTS;
+      const text = formatRaw(spendable, 9);
+      document.querySelector("#pool-sol-max").textContent = `· ${text} available`;
+      if (spendable === 0n) {
+        throw new Error(`Wallet has ${held.text} SOL. That is not enough after the Raydium creation fee and network buffer.`);
+      }
+      document.querySelector("#pool-sol").value = text;
+      poolResult.textContent = `MAX SOL is ${text}. Wallet balance is ${held.text} SOL. ${formatRaw(reserve, 9)} SOL stays for the Raydium creation fee and network costs.`;
+    }
+
+    async function fillAddMax() {
+      await ensureWallet();
+      const side = document.querySelector("#add-side").value;
+      if (side === "sol") {
+        const held = await solHoldings();
+        let spendable = held.lamports > SOL_BUFFER ? held.lamports - SOL_BUFFER : 0n;
+        if (spendable > MAX_SOL_LAMPORTS) spendable = MAX_SOL_LAMPORTS;
+        const text = formatRaw(spendable, 9);
+        document.querySelector("#add-amount-max").textContent = `· ${text} SOL available`;
+        if (spendable === 0n) throw new Error(`Wallet has ${held.text} SOL, which is below the network buffer.`);
+        document.querySelector("#add-amount").value = text;
+        poolResult.textContent = `MAX deposits ${text} SOL. ${formatRaw(SOL_BUFFER, 9)} SOL stays for the network fee. The token side is calculated from the pool price.`;
+        return;
+      }
+      const id = document.querySelector("#pool-id").value.trim();
+      if (!id) throw new Error("Enter the pool address first.");
+      const response = await fetch(`/api/pool?id=${encodeURIComponent(id)}`);
+      const body = await response.json();
+      if (!response.ok) throw new Error(body.error || "Pool lookup failed.");
+      const held = await tokenHoldings(body.tokenMint);
+      document.querySelector("#add-amount-max").textContent = held.raw > 0n ? `· ${held.text} tokens` : "· 0 tokens";
+      if (held.raw === 0n) throw new Error("This wallet holds none of the pool token.");
+      document.querySelector("#add-amount").value = held.text;
+      poolResult.textContent = `MAX uses the full token balance: ${held.text}. The SOL side is calculated from the pool price.`;
+    }
+
+    document.querySelector("#max-token").addEventListener("click", () => {
+      poolResult.textContent = "Reading token balance...";
+      fillTokenMax().catch((error) => {
+        poolResult.textContent = error instanceof Error ? error.message : "Could not read the token balance.";
+      });
+    });
+    document.querySelector("#max-sol").addEventListener("click", () => {
+      poolResult.textContent = "Reading SOL balance...";
+      fillSolMax().catch((error) => {
+        poolResult.textContent = error instanceof Error ? error.message : "Could not read the SOL balance.";
+      });
+    });
+    document.querySelector("#max-add").addEventListener("click", () => {
+      poolResult.textContent = "Reading wallet balance...";
+      fillAddMax().catch((error) => {
+        poolResult.textContent = error instanceof Error ? error.message : "Could not read the max amount.";
+      });
+    });
+
+    let balanceTimer = 0;
+    document.querySelector("#pool-mint").addEventListener("input", () => {
+      clearTimeout(balanceTimer);
+      balanceTimer = setTimeout(() => {
+        noteTokenBalance().catch(() => {
+          document.querySelector("#pool-token-max").textContent = "";
+        });
+      }, 600);
+    });
+
+    function shortAddress(value) {
+      if (!value || value.length < 12) return value || "";
+      return `${value.slice(0, 4)}...${value.slice(-4)}`;
+    }
+
+    function compactAmount(value) {
+      const amount = Number(value);
+      if (!Number.isFinite(amount)) return "0";
+      const abs = Math.abs(amount);
+      if (abs >= 1e9) return `${(amount / 1e9).toFixed(2)}B`;
+      if (abs >= 1e6) return `${(amount / 1e6).toFixed(2)}M`;
+      if (abs >= 1e3) return `${(amount / 1e3).toFixed(2)}K`;
+      return amount.toFixed(4);
+    }
+
+    function usdText(value) {
+      const amount = Number(value);
+      if (!Number.isFinite(amount)) return "~$0.00";
+      if (amount > 0 && amount < 0.01) return `~$${amount.toFixed(6)}`;
+      return `~$${amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+    }
+
+    function poolLink(href, label) {
+      const link = document.createElement("a");
+      link.href = href;
+      link.target = "_blank";
+      link.rel = "noopener noreferrer";
+      link.textContent = label;
+      return link;
+    }
+
+    function renderPools(pools) {
+      const list = document.querySelector("#pool-list");
+      list.replaceChildren();
+      if (!pools.length) {
+        list.append(Object.assign(document.createElement("p"), {
+          className: "pool-empty",
+          textContent: "No SOL Raydium pools were found in this wallet.",
+        }));
+        return;
+      }
+      for (const pool of pools) {
+        const card = document.createElement("article");
+        card.className = "pool-card";
+        const top = document.createElement("div");
+        top.className = "pool-top";
+        const pair = document.createElement("div");
+        pair.className = "pair";
+        const avatars = document.createElement("div");
+        avatars.className = "avatars";
+        avatars.append(Object.assign(document.createElement("span"), { className: "sol", textContent: "◎" }));
+        avatars.append(Object.assign(document.createElement("span"), {
+          className: "tok",
+          textContent: (pool.tokenSymbol || "T").slice(0, 1).toUpperCase(),
+        }));
+        const names = document.createElement("div");
+        names.append(Object.assign(document.createElement("h3"), { textContent: `SOL-${pool.tokenSymbol || "TOKEN"}` }));
+        names.append(Object.assign(document.createElement("p"), { textContent: shortAddress(pool.tokenMint) }));
+        pair.append(avatars, names);
+        const views = document.createElement("div");
+        views.className = "views";
+        const mint = /^[1-9A-HJ-NP-Za-km-z]{32,44}$/.test(pool.tokenMint) ? pool.tokenMint : "";
+        if (mint) {
+          views.append(
+            poolLink(`https://photon-sol.tinyastro.io/en/r/${mint}`, "View on Photon"),
+            poolLink(`https://axiom.trade/t/${mint}`, "View on Axiom"),
+            poolLink(`https://birdeye.so/token/${mint}?chain=solana`, "View on Birdeye")
+          );
+        }
+        top.append(pair, views);
+        const id = document.createElement("p");
+        id.className = "pool-id";
+        id.textContent = `Pool ID: ${pool.poolId}`;
+        const stats = document.createElement("div");
+        stats.className = "pool-stats";
+        const columns = [
+          ["POOLED SOL", compactAmount(pool.solAmount), ""],
+          [`POOLED ${pool.tokenSymbol || "TOKEN"}`, compactAmount(pool.tokenAmount), ""],
+          ["POOL VALUE", usdText(pool.valueUsd), `USD (~${compactAmount(pool.valueSol)} SOL)`],
+        ];
+        for (const [label, value, note] of columns) {
+          const column = document.createElement("div");
+          column.append(Object.assign(document.createElement("span"), { textContent: label }));
+          const strong = document.createElement("strong");
+          strong.textContent = value;
+          if (label === "POOL VALUE") {
+            const line = document.createElement("div");
+            line.className = "value-line";
+            line.append(strong);
+            line.insertAdjacentHTML("beforeend", `<svg width="34" height="18" viewBox="0 0 34 18" fill="none" aria-hidden="true"><path d="M1 14 L8 12 L13 13 L20 7 L26 8 L33 2" stroke="#3dd68c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`);
+            column.append(line);
+          } else {
+            column.append(strong);
+          }
+          if (note) column.append(Object.assign(document.createElement("em"), { textContent: note }));
+          stats.append(column);
+        }
+        card.append(top, id, stats);
+        list.append(card);
+      }
+    }
+
+    async function loadYourPools() {
+      const list = document.querySelector("#pool-list");
+      if (!wallet) {
+        list.replaceChildren(Object.assign(document.createElement("p"), {
+          className: "pool-empty",
+          textContent: "Connect your wallet to see the Raydium pools it holds.",
+        }));
+        return;
+      }
+      list.replaceChildren(Object.assign(document.createElement("p"), {
+        className: "pool-empty",
+        textContent: "Reading pools in this wallet...",
+      }));
+      const response = await fetch(`/api/pools?owner=${encodeURIComponent(wallet.toBase58())}`);
+      const body = await response.json();
+      if (!response.ok) throw new Error(body.error || "Could not read your pools.");
+      renderPools(body.pools || []);
+    }
+
+    document.querySelector("#refresh-pools").addEventListener("click", () => {
+      loadYourPools().catch((error) => {
+        document.querySelector("#pool-list").textContent = error instanceof Error ? error.message : "Could not read your pools.";
+      });
+    });
+
+    async function signPool(payload) {
+      if (!wallet) await connect();
+      if (!wallet) throw new Error("Connect Phantom before depositing.");
+      const response = await fetch("/api/pool/build", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...payload, owner: wallet.toBase58(), confirm: true }),
+      });
+      const body = await response.json();
+      if (!response.ok) throw new Error(body.error || "Could not build the pool transaction.");
+      const bytes = Uint8Array.from(atob(body.transaction), (char) => char.charCodeAt(0));
+      const signed = await provider().signTransaction(VersionedTransaction.deserialize(bytes));
+      const signature = await connection.sendRawTransaction(signed.serialize());
+      return { signature, poolId: body.poolId, summary: body.summary };
+    }
+
+    document.querySelector("#pool-preview").addEventListener("click", async () => {
+      poolResult.textContent = "Checking Raydium fee...";
+      try {
+        const response = await fetch("/api/pool/preview", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            mint: document.querySelector("#pool-mint").value.trim(),
+            tokenAmount: document.querySelector("#pool-token").value.trim(),
+            solAmount: document.querySelector("#pool-sol").value.trim(),
+          }),
+        });
+        const body = await response.json();
+        if (!response.ok) throw new Error(body.error || "Preview failed.");
+        poolResult.textContent = `Trade fee ${body.tradeFee}. Raydium pool creation fee ${body.createFeeSol} SOL, plus your ${body.solAmount} SOL and ${body.tokenAmount} tokens.`;
+      } catch (error) {
+        poolResult.textContent = error instanceof Error ? error.message : "Preview failed.";
+      }
+    });
+
+    document.querySelector("#create-pool").addEventListener("submit", async (event) => {
+      event.preventDefault();
+      if (!document.querySelector("#pool-confirm").checked) {
+        poolResult.textContent = "Confirm the deposit before creating the pool.";
+        return;
+      }
+      poolResult.textContent = "Building the pool transaction...";
+      try {
+        const sent = await signPool({
+          action: "create",
+          mint: document.querySelector("#pool-mint").value.trim(),
+          tokenAmount: document.querySelector("#pool-token").value.trim(),
+          solAmount: document.querySelector("#pool-sol").value.trim(),
+        });
+        poolResult.textContent = `Pool ${sent.poolId}\nSignature: ${sent.signature}`;
+        loadYourPools().catch(() => {});
+      } catch (error) {
+        poolResult.textContent = error instanceof Error ? error.message : "Pool creation failed.";
+      }
+    });
+
+    document.querySelector("#pool-lookup").addEventListener("click", async () => {
+      poolResult.textContent = "Reading the pool...";
+      try {
+        const id = document.querySelector("#pool-id").value.trim();
+        const response = await fetch(`/api/pool?id=${encodeURIComponent(id)}`);
+        const body = await response.json();
+        if (!response.ok) throw new Error(body.error || "Pool lookup failed.");
+        poolResult.textContent = `Token ${body.tokenMint}\nReserves: ${body.tokenReserve} tokens and ${body.solReserve} SOL`;
+      } catch (error) {
+        poolResult.textContent = error instanceof Error ? error.message : "Pool lookup failed.";
+      }
+    });
+
+    document.querySelector("#add-pool").addEventListener("submit", async (event) => {
+      event.preventDefault();
+      poolResult.textContent = "Building the deposit...";
+      try {
+        const sent = await signPool({
+          action: "add",
+          poolId: document.querySelector("#pool-id").value.trim(),
+          inputSide: document.querySelector("#add-side").value,
+          amount: document.querySelector("#add-amount").value.trim(),
+        });
+        poolResult.textContent = `Deposited into ${sent.poolId}. The other side is about ${sent.summary.otherAmount}.\nSignature: ${sent.signature}`;
+        loadYourPools().catch(() => {});
+      } catch (error) {
+        poolResult.textContent = error instanceof Error ? error.message : "Deposit failed.";
+      }
+    });
+
+    showRent();
+  </script>
+</body>
+</html>
