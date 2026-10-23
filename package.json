@@ -6,7 +6,7 @@
     "build:api": "node scripts/bundle-api.cjs"
   },
   "engines": {
-    "node": "20.x"
+    "node": "24.x"
   },
   "license": "ISC",
   "devDependencies": {

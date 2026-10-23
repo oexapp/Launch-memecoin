@@ -24,7 +24,7 @@ async function main() {
       bundle: true,
       platform: "node",
       format: "cjs",
-      target: "node20",
+      target: "node24",
       packages: "external",
       legalComments: "none",
       logLevel: "warning",
