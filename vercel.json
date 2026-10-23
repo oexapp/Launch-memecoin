@@ -1,10 +1,10 @@
 {
   "functions": {
-    "api/metadata.ts": { "maxDuration": 60 },
-    "api/pools.ts": { "maxDuration": 60 },
-    "api/pool/index.ts": { "maxDuration": 60 },
-    "api/pool/preview.ts": { "maxDuration": 60 },
-    "api/pool/build.ts": { "maxDuration": 60 }
+    "api/metadata.js": { "maxDuration": 60 },
+    "api/pools.js": { "maxDuration": 60 },
+    "api/pool/index.js": { "maxDuration": 60 },
+    "api/pool/preview.js": { "maxDuration": 60 },
+    "api/pool/build.js": { "maxDuration": 60 }
   },
   "rewrites": [
     { "source": "/launch", "destination": "/" }

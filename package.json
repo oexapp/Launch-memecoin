@@ -2,13 +2,18 @@
   "name": "launch-coin",
   "private": true,
   "scripts": {
-    "web": "npx ts-node ./web/server.ts"
+    "web": "npx ts-node ./web/server.ts",
+    "build:api": "node scripts/bundle-api.cjs"
+  },
+  "engines": {
+    "node": "20.x"
   },
   "license": "ISC",
   "devDependencies": {
     "@types/bn.js": "^5.1.5",
     "@types/node": "^20.14.1",
     "dotenv": "^16.4.5",
+    "esbuild": "^0.28.2",
     "ts-node": "^10.9.2",
     "typescript": "^5.3.3"
   },

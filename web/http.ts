@@ -1,9 +1,6 @@
 import fs from "fs";
 import http from "http";
 import path from "path";
-import dotenv from "dotenv";
-
-dotenv.config();
 
 const PAGE_PATH = path.join(process.cwd(), "public", "index.html");
 const MAX_IMAGE_BYTES = 3 * 1024 * 1024;
